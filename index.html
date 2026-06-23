@@ -710,6 +710,71 @@
             box-shadow: 0 1px 3px rgba(226, 104, 47, 0.3);
         }
 
+        /* Bouton hamburger : masqué par défaut (mobile = barre déroulante tactile) */
+        .nav-burger { display: none; }
+        /* Mobile : le wrapper est neutralisé pour préserver le sticky de .nav */
+        .nav-wrap { display: contents; }
+
+        /* ===== DESKTOP : navigation en menu hamburger ===== */
+        @media (min-width: 820px) {
+            .nav-wrap {
+                display: block;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: var(--bg);
+                border-bottom: 1px solid var(--sep);
+                padding: 8px 12px;
+            }
+            .nav-burger {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 16px;
+                border: 1px solid var(--sep-strong);
+                background: var(--bg-elevated);
+                color: var(--text);
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 700;
+                border-radius: 9px;
+                letter-spacing: -0.01em;
+                font-family: var(--font);
+            }
+            .nav-burger:hover { color: var(--accent); border-color: var(--accent); }
+            /* La barre devient un panneau déroulant ancré sous le bouton */
+            .nav {
+                display: none;
+                position: absolute;
+                top: calc(100% + 4px);
+                left: 12px;
+                flex-direction: column;
+                gap: 2px;
+                width: 280px;
+                max-width: calc(100vw - 24px);
+                padding: 8px;
+                background: var(--bg-elevated);
+                border: 1px solid var(--sep-strong);
+                border-radius: 13px;
+                box-shadow: var(--shadow-lg);
+                overflow: visible;
+            }
+            .nav.open { display: flex; }
+            .nav button {
+                width: 100%;
+                text-align: left;
+                font-size: 15px;
+                padding: 11px 14px;
+            }
+            .nav-sp {
+                flex: 0 0 auto;
+                height: 1px;
+                width: 100%;
+                background: var(--sep);
+                margin: 4px 0;
+            }
+        }
+
         /* ===== CONTENT ===== */
         .content {
             flex: 1;
@@ -1926,7 +1991,9 @@
             <div class="header-time" id="current-time">LUN 15 JUIN • 14:32</div>
         </div>
 
-        <div class="nav">
+        <div class="nav-wrap">
+            <button class="nav-burger" onclick="toggleNavMenu()" aria-label="Ouvrir le menu" aria-expanded="false">☰ <span>Menu</span></button>
+            <div class="nav" id="mainNav">
             <button id="nav-punch" class="active" onclick="switchTab(event, 'punch')">Punch</button>
             <button id="nav-correction" onclick="switchTab(event, 'correction')">Corriger mon punch</button>
             <div class="nav-sp"></div>
@@ -1941,6 +2008,7 @@
             <button id="nav-rotation" onclick="switchTab(event, 'rotation')">Rotation du Vin</button>
             <div class="nav-sp"></div>
             <button id="nav-admin" onclick="switchTab(event, 'admin')">Admin</button>
+            </div>
         </div>
 
         <div class="content">
@@ -2202,7 +2270,7 @@
                                 <span id="sched-week-label" class="sched-week-label"></span>
                                 <button onclick="schedShiftWeek(1)" title="Semaine suivante">›</button>
                             </div>
-                            <button class="sched-copy-btn" onclick="copyPrevWeek()" title="Reprendre les shifts de la semaine précédente comme base">↩︎ Reprendre la semaine précédente</button>
+                            <button class="sched-copy-btn" onclick="openCopyWeekModal()" title="Reprendre les shifts d'une autre semaine comme base">↩︎ Reprendre d'une autre semaine</button>
                             <button class="sched-publish-btn" onclick="publishWeek()">📣 Publier cette semaine</button>
                             <div id="sched-publish-info" class="sched-publish-info"></div>
                             <div class="cal-wrap">
@@ -2457,6 +2525,19 @@
                 <button class="modal-btn confirm" onclick="saveScheduleEntry()">Sauvegarder</button>
             </div>
             <button id="sched-delete-btn" onclick="deleteScheduleEntry()" style="display:none; margin-top:12px; width:100%; background:var(--red-soft); color:var(--red-text); border:none; border-radius:13px; padding:13px; font-size:15px; font-weight:600; cursor:pointer;">🗑️ Vider cette case</button>
+        </div>
+    </div>
+
+    <!-- MODAL: REPRENDRE D'UNE AUTRE SEMAINE -->
+    <div id="copyWeekModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 420px; text-align: left;">
+            <div class="modal-icon" style="text-align:center;">↩︎</div>
+            <h2 style="text-align:center;">Reprendre d'une autre semaine</h2>
+            <p id="copy-week-sub" style="text-align:center; font-size:13px; color:var(--text-2); margin-bottom:1rem;"></p>
+            <div id="copy-week-list" style="display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; margin-bottom:1rem;"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeCopyWeekModal()">Annuler</button>
+            </div>
         </div>
     </div>
 
@@ -3454,28 +3535,69 @@
             renderSchedule();
         }
 
-        // Reprend les shifts de la semaine précédente comme base (dépt courant)
-        function copyPrevWeek() {
+        // Une semaine (objet de jours) contient-elle au moins un shift ?
+        function weekDataHasShifts(data) {
+            return data && Object.values(data).some(d =>
+                d && !Array.isArray(d) && (d.shifts || []).some(s => s && (s.emp || s.time || s.code)));
+        }
+
+        // Libellé « 23 juin – 29 juin 2026 » à partir d'une clé de semaine (YYYY-MM-DD)
+        function weekRangeLabel(wkKey) {
+            const start = new Date(wkKey + 'T12:00:00');
+            const end = new Date(start); end.setDate(end.getDate() + 6);
+            const s = start.toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' });
+            const e = end.toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: 'numeric' });
+            return s + ' – ' + e;
+        }
+
+        // Ouvre le sélecteur de semaine source (dépt courant)
+        function openCopyWeekModal() {
             const dept = currentScheduleDept;
             const wk = formatDate(scheduleWeekStart);
-            const prevStart = new Date(scheduleWeekStart);
-            prevStart.setDate(prevStart.getDate() - 7);
-            const prevWk = formatDate(prevStart);
-
             const sched = getSchedules();
-            const prevData = sched[dept] && sched[dept][prevWk];
-            const prevHasShifts = prevData && Object.values(prevData).some(d =>
-                d && !Array.isArray(d) && (d.shifts || []).some(s => s && (s.emp || s.time || s.code)));
+            const deptSched = sched[dept] || {};
 
-            if (!prevHasShifts) {
-                alert('⚠️ Aucun horaire à reprendre la semaine précédente pour ' + dept + '.');
+            // Toutes les semaines (sauf la semaine affichée) qui contiennent des shifts, plus récentes d'abord
+            const weeks = Object.keys(deptSched)
+                .filter(k => k !== wk && weekDataHasShifts(deptSched[k]))
+                .sort((a, b) => b.localeCompare(a));
+
+            document.getElementById('copy-week-sub').textContent =
+                'Choisis la semaine à copier vers la semaine du ' + weekRangeLabel(wk) + ' (' + dept + ').';
+
+            const list = document.getElementById('copy-week-list');
+            if (!weeks.length) {
+                list.innerHTML = '<p style="font-size:13px; color:var(--text-3); font-style:italic; text-align:center;">Aucune autre semaine avec des shifts pour ' + dept + '.</p>';
+            } else {
+                list.innerHTML = weeks.map(k => {
+                    const isCurrent = formatDate(getMonday(new Date())) === k ? ' 📅' : '';
+                    return '<button class="sched-copy-btn" style="margin:0; text-transform:none; letter-spacing:normal; text-align:left;" onclick="copyFromWeek(\'' + k + '\')">↩︎ Semaine du ' + weekRangeLabel(k) + isCurrent + '</button>';
+                }).join('');
+            }
+            document.getElementById('copyWeekModal').classList.add('show');
+        }
+
+        function closeCopyWeekModal() {
+            document.getElementById('copyWeekModal').classList.remove('show');
+        }
+
+        // Reprend les shifts de la semaine source choisie comme base (dépt courant)
+        function copyFromWeek(srcWk) {
+            const dept = currentScheduleDept;
+            const wk = formatDate(scheduleWeekStart);
+            if (srcWk === wk) { closeCopyWeekModal(); return; }
+
+            const srcStart = new Date(srcWk + 'T12:00:00');
+            const sched = getSchedules();
+            const srcData = sched[dept] && sched[dept][srcWk];
+
+            if (!weekDataHasShifts(srcData)) {
+                alert('⚠️ Aucun horaire à reprendre pour cette semaine (' + dept + ').');
                 return;
             }
 
-            const curData = sched[dept] && sched[dept][wk];
-            const curHasShifts = curData && Object.values(curData).some(d =>
-                d && !Array.isArray(d) && (d.shifts || []).some(s => s && (s.emp || s.time || s.code)));
-            if (curHasShifts && !confirm('La semaine affichée contient déjà des shifts. Les remplacer par ceux de la semaine précédente ?')) {
+            if (weekDataHasShifts(sched[dept] && sched[dept][wk]) &&
+                !confirm('La semaine affichée contient déjà des shifts. Les remplacer par ceux de la semaine du ' + weekRangeLabel(srcWk) + ' ?')) {
                 return;
             }
 
@@ -3483,11 +3605,11 @@
             if (!sched[dept][wk]) sched[dept][wk] = {};
 
             for (let i = 0; i < 7; i++) {
-                const pd = new Date(prevStart); pd.setDate(pd.getDate() + i);
+                const sd = new Date(srcStart); sd.setDate(sd.getDate() + i);
                 const cd = new Date(scheduleWeekStart); cd.setDate(cd.getDate() + i);
-                const pIso = formatDate(pd), cIso = formatDate(cd);
+                const sIso = formatDate(sd), cIso = formatDate(cd);
 
-                const src = prevData[pIso];
+                const src = srcData[sIso];
                 const shifts = (src && !Array.isArray(src) ? (src.shifts || []) : [])
                     .filter(s => s && (s.emp || s.time || s.code))
                     .map(s => ({ emp: s.emp, time: s.time, code: s.code })); // copie profonde
@@ -3505,7 +3627,8 @@
 
             saveSchedules(sched);
             renderSchedule();
-            alert('✓ Shifts repris depuis la semaine précédente (' + dept + ').');
+            closeCopyWeekModal();
+            alert('✓ Shifts repris depuis la semaine du ' + weekRangeLabel(srcWk) + ' (' + dept + ').');
         }
 
 
@@ -5837,6 +5960,7 @@
             document.getElementById(tab).classList.add('active');
             const navBtn = dept ? document.getElementById('nav-' + tab + '-' + dept.toLowerCase()) : document.getElementById('nav-' + tab);
             if (navBtn) navBtn.classList.add('active');
+            closeNavMenu();
             if (tab === 'admin' && adminUnlocked) showAdminMenu();
             if (tab === 'taches') { taskDept = dept || 'SERVICE'; taskWeekStart = getWeekStart(new Date()); renderTasks(); }
             if (tab === 'rotation') { renderRotation(); }
@@ -5864,6 +5988,25 @@
         function switchTab(event, tab, dept) {
             selectTab(tab, dept);
         }
+
+        // ===== MENU HAMBURGER (desktop) =====
+        function toggleNavMenu() {
+            const nav = document.getElementById('mainNav');
+            const burger = document.querySelector('.nav-burger');
+            const open = nav.classList.toggle('open');
+            if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        function closeNavMenu() {
+            const nav = document.getElementById('mainNav');
+            if (nav) nav.classList.remove('open');
+            const burger = document.querySelector('.nav-burger');
+            if (burger) burger.setAttribute('aria-expanded', 'false');
+        }
+        // Fermer le menu en cliquant à l'extérieur
+        document.addEventListener('click', function (e) {
+            const wrap = document.querySelector('.nav-wrap');
+            if (wrap && !wrap.contains(e.target)) closeNavMenu();
+        });
 
         // ===== POURBOIRES =====
         const KITCHEN_TIP_RATE = 0.05; // 5% des ventes nourriture (fixe — à réviser en convention)
@@ -6726,7 +6869,10 @@
             } else {
                 h += '<span class="vassign">Mettre sur <select onchange="vinAssign(' + loc.ri + ', this.value)"><option value="">— position —</option>' + getWines().map((s, i) => '<option value="' + i + '">' + esc(s.slot) + '</option>').join('') + '</select></span>';
             }
-            h += '<button class="vbtn danger" onclick="vinDelete(\'' + loc.type + '\',' + (loc.type === 'pos' ? loc.si + ',' + loc.ii : loc.ri) + ')">🗑️</button>';
+            // Suppression définitive d'une fiche : uniquement depuis la banque (pas depuis l'ardoise)
+            if (loc.type !== 'pos') {
+                h += '<button class="vbtn danger" onclick="vinDelete(\'' + loc.type + '\',' + loc.ri + ')">🗑️</button>';
+            }
             h += '</div></div>';
             return h;
         }
