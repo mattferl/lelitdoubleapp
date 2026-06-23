@@ -1883,6 +1883,53 @@
         .vin-modal-box { text-align: left; width: 94%; max-width: 470px; max-height: 88vh; overflow-y: auto; padding: 18px; }
         .vin-modal-head { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
         .vin-modal-box .vadmin-form { background: transparent; border: none; padding: 0; margin: 0; }
+
+        /* ===== INVENTAIRE ===== */
+        .inv-seasonbar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .inv-seasonbar label { font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.03em; }
+        .inv-seasonbar select { padding: 8px 10px; border-radius: 9px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text); font-size: 14px; font-weight: 600; font-family: var(--font); }
+        .inv-viewtabs, .inv-cattabs { display: flex; gap: 6px; margin-bottom: 14px; }
+        .inv-tab { flex: 1; padding: 10px 8px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text-2); border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: var(--font); }
+        .inv-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .inv-hint { font-size: 12px; color: var(--text-3); font-style: italic; line-height: 1.5; margin-bottom: 12px; }
+
+        .inv-item { background: var(--card); border: 1px solid var(--sep); border-radius: 13px; padding: 12px 13px; margin-bottom: 10px; }
+        .inv-item.under-min { border-color: var(--red); background: var(--red-soft); }
+        .inv-item-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .inv-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; min-width: 140px; }
+        .inv-levels { font-size: 12px; color: var(--text-2); font-family: var(--mono); white-space: nowrap; }
+        .inv-levels .mn { color: var(--red-text); font-weight: 700; }
+        .inv-levels .mx { color: var(--green-text); font-weight: 700; }
+        .inv-flag { font-size: 11px; font-weight: 700; color: var(--red-text); }
+        .inv-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .inv-reste { display: flex; align-items: center; gap: 6px; }
+        .inv-reste label { font-size: 12px; color: var(--text-2); font-weight: 600; }
+        .inv-reste input { width: 56px; padding: 8px; border-radius: 8px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text); font-size: 15px; text-align: center; font-family: var(--mono); }
+        .inv-order { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+        .inv-order label { font-size: 12px; color: var(--text-2); font-weight: 600; }
+        .inv-stepper { display: flex; align-items: center; gap: 0; border: 1px solid var(--sep-strong); border-radius: 9px; overflow: hidden; }
+        .inv-stepper button { width: 40px; height: 40px; border: none; background: var(--bg-elevated); color: var(--accent); font-size: 22px; font-weight: 700; cursor: pointer; line-height: 1; }
+        .inv-stepper button:active { background: var(--accent-soft); }
+        .inv-stepper .inv-qty { width: 44px; text-align: center; font-size: 17px; font-weight: 800; color: var(--text); font-family: var(--mono); border: none; background: transparent; padding: 0; }
+        .inv-qty.has { color: var(--accent); }
+
+        .inv-orderbar { position: sticky; bottom: 0; background: var(--bg-elevated); border-top: 1px solid var(--sep-strong); padding: 12px; margin: 14px -1rem -2.5rem; box-shadow: 0 -4px 14px rgba(111,43,2,0.08); }
+        .inv-orderbar button { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 11px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font); }
+
+        .inv-sup-group { margin-bottom: 18px; border: 1px solid var(--sep-strong); border-radius: 13px; overflow: hidden; }
+        .inv-sup-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--gray-soft); padding: 11px 13px; }
+        .inv-sup-name { font-size: 15px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.02em; }
+        .inv-sup-copy { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: var(--font); white-space: nowrap; }
+        .inv-sup-copy:active { background: var(--accent-press); }
+        .inv-sup-lines { padding: 8px 13px; }
+        .inv-sup-line { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--sep); font-size: 14px; color: var(--text); }
+        .inv-sup-line:last-child { border-bottom: none; }
+        .inv-sup-line b { color: var(--accent); font-family: var(--mono); min-width: 32px; }
+        .inv-order-actions { display: flex; gap: 8px; margin-top: 8px; }
+        .inv-order-actions button { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: var(--font); border: 1px solid var(--sep-strong); }
+        .inv-copyall { background: var(--accent); color: #fff; border-color: var(--accent) !important; }
+        .inv-reset { background: var(--bg-elevated); color: var(--red-text); }
+        .inv-empty { font-size: 14px; color: var(--text-3); font-style: italic; text-align: center; padding: 24px 0; }
     </style>
 </head>
 <body>
@@ -2200,6 +2247,14 @@
                                 </div>
                                 <span class="admin-menu-arrow">›</span>
                             </div>
+                            <div class="admin-menu-item" onclick="openAdminPage('inventaire')">
+                                <span class="admin-menu-icon">📦</span>
+                                <div class="admin-menu-text">
+                                    <div class="admin-menu-name">Inventaire</div>
+                                    <div class="admin-menu-desc">Forts &amp; bières — niveaux min/max et commandes</div>
+                                </div>
+                                <span class="admin-menu-arrow">›</span>
+                            </div>
                         </div>
 
                         <!-- PAGE: MODIFICATION HORODATEUR -->
@@ -2331,6 +2386,10 @@
                         <!-- PAGE: VINS / ARDOISE -->
                         <div id="page-vins" class="admin-page" style="display: none;">
                             <div id="vins-admin"></div>
+                        </div>
+                        <!-- PAGE: INVENTAIRE -->
+                        <div id="page-inventaire" class="admin-page" style="display: none;">
+                            <div id="inventaire-admin"></div>
                         </div>
                     </div>
                 </div>
@@ -2721,6 +2780,7 @@
                 const rows = await res.json();
                 let hasDept = false, hasPunch = false, hasSched = false, hasDevices = false, hasTpl = false, hasState = false, hasPub = false, hasUnavail = false, hasReq = false, hasExp = false, hasTips = false, hasWines = false, hasReserve = false;
                 let hasTplS = false, hasTplC = false, hasStS = false, hasStC = false;
+                let hasInventory = false;
                 (rows || []).forEach(r => {
                     if (r.key === 'departments' && r.value) { departments = r.value; hasDept = true; }
                     if (r.key === 'punches') { _punches = r.value || {}; hasPunch = true; }
@@ -2739,6 +2799,7 @@
                     if (r.key === 'tips') { _tips = r.value || {}; hasTips = true; }
                     if (r.key === 'wines') { _wines = r.value || []; hasWines = true; }
                     if (r.key === 'wineReserve') { _wineReserve = r.value || []; hasReserve = true; }
+                    if (r.key === 'inventory') { _inventory = r.value || defaultInventory(); hasInventory = true; }
                 });
                 if (initial && !hasDept) sbWriteState('departments', departments);
                 if (initial && !hasPunch) { _punches = {}; sbWriteState('punches', _punches); }
@@ -2760,11 +2821,83 @@
                 if (initial && !hasTips) { _tips = {}; sbWriteState('tips', _tips); }
                 if (initial && !hasWines) { _wines = defaultWines(); sbWriteState('wines', _wines); }
                 if (initial && !hasReserve) { _wineReserve = []; sbWriteState('wineReserve', _wineReserve); }
+                if (initial && !hasInventory) { _inventory = defaultInventory(); sbWriteState('inventory', _inventory); }
                 return true;
             } catch (e) {
                 console.error('Erreur lecture Supabase:', e);
                 return false;
             }
+        }
+
+        // ===== INVENTAIRE — données de départ (depuis la cheat sheet hiver) =====
+        function defaultInventory() {
+            return {
+                suppliers: [{ id: "saq", name: "SAQ", sort: 0 }],
+                seasons: [{ id: "hiver", name: "Hiver (sept–avril)", sort: 0 }, { id: "ete", name: "Été (mai–août)", sort: 1 }],
+                activeSeason: "hiver",
+                items: [
+                    {"id": "i01", "season": "hiver", "cat": "biere", "name": "Boréale Lager (50L)", "min": 0, "max": 3, "supplierId": "", "unit": "baril", "sort": 1},
+                    {"id": "i02", "season": "hiver", "cat": "biere", "name": "Boréale Rousse (50L)", "min": 0, "max": 1, "supplierId": "", "unit": "baril", "sort": 2},
+                    {"id": "i03", "season": "hiver", "cat": "biere", "name": "Boréale IPA (30L)", "min": 0, "max": 2, "supplierId": "", "unit": "baril", "sort": 3},
+                    {"id": "i04", "season": "hiver", "cat": "biere", "name": "Boréale Blanche des Cimes (30L)", "min": 0, "max": 2, "supplierId": "", "unit": "baril", "sort": 4},
+                    {"id": "i05", "season": "hiver", "cat": "biere", "name": "Boréale Pilsner (30L)", "min": 0, "max": 4, "supplierId": "", "unit": "baril", "sort": 5},
+                    {"id": "i06", "season": "hiver", "cat": "biere", "name": "Grand Bois Stout (30L)", "min": 0, "max": 2, "supplierId": "", "unit": "baril", "sort": 6},
+                    {"id": "i07", "season": "hiver", "cat": "biere", "name": "Brasseur des Monts sûre (30L)", "min": 0, "max": 2, "supplierId": "", "unit": "baril", "sort": 7},
+                    {"id": "i08", "season": "hiver", "cat": "biere", "name": "Cidre Fleuri (30L)", "min": 0, "max": 2, "supplierId": "", "unit": "baril", "sort": 8},
+                    {"id": "i09", "season": "hiver", "cat": "biere", "name": "NEIPA de Micro (Menaud) (30L)", "min": 0, "max": 4, "supplierId": "", "unit": "baril", "sort": 9},
+                    {"id": "i10", "season": "hiver", "cat": "biere", "name": "Lager de Micro (Grand Bois) (30L)", "min": 0, "max": 4, "supplierId": "", "unit": "baril", "sort": 10},
+                    {"id": "i11", "season": "hiver", "cat": "biere", "name": "Wills Pale Ale (30L)", "min": 0, "max": 3, "supplierId": "", "unit": "baril", "sort": 11},
+                    {"id": "i12", "season": "hiver", "cat": "fort", "name": "Vodka moskovskaya 1.14 L", "min": 3, "max": 7, "supplierId": "saq", "unit": "bouteille", "sort": 12},
+                    {"id": "i13", "season": "hiver", "cat": "fort", "name": "Gin Tanqueray 1.14", "min": 3, "max": 9, "supplierId": "saq", "unit": "bouteille", "sort": 13},
+                    {"id": "i14", "season": "hiver", "cat": "fort", "name": "Aperol", "min": 2, "max": 9, "supplierId": "saq", "unit": "bouteille", "sort": 14},
+                    {"id": "i15", "season": "hiver", "cat": "fort", "name": "Rhum plantation 750ml", "min": 2, "max": 5, "supplierId": "saq", "unit": "bouteille", "sort": 15},
+                    {"id": "i16", "season": "hiver", "cat": "fort", "name": "Amaro Nenino", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 16},
+                    {"id": "i17", "season": "hiver", "cat": "fort", "name": "Tequila Sauza 1.14", "min": 2, "max": 7, "supplierId": "saq", "unit": "bouteille", "sort": 17},
+                    {"id": "i18", "season": "hiver", "cat": "fort", "name": "Triple sec 750ml", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 18},
+                    {"id": "i19", "season": "hiver", "cat": "fort", "name": "Vermouth rouge", "min": 2, "max": 5, "supplierId": "saq", "unit": "bouteille", "sort": 19},
+                    {"id": "i20", "season": "hiver", "cat": "fort", "name": "Campari", "min": 2, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 20},
+                    {"id": "i21", "season": "hiver", "cat": "fort", "name": "Disaronno 1.14", "min": 3, "max": 8, "supplierId": "saq", "unit": "bouteille", "sort": 21},
+                    {"id": "i22", "season": "hiver", "cat": "fort", "name": "CC Rye 750", "min": 3, "max": 10, "supplierId": "saq", "unit": "bouteille", "sort": 22},
+                    {"id": "i23", "season": "hiver", "cat": "fort", "name": "Planteray Dark", "min": 2, "max": 5, "supplierId": "saq", "unit": "bouteille", "sort": 23},
+                    {"id": "i24", "season": "hiver", "cat": "fort", "name": "Lillet", "min": 1, "max": 3, "supplierId": "saq", "unit": "bouteille", "sort": 24},
+                    {"id": "i25", "season": "hiver", "cat": "fort", "name": "Vermouth Blanc Noilly prat", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 25},
+                    {"id": "i26", "season": "hiver", "cat": "fort", "name": "Cynar", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 26},
+                    {"id": "i27", "season": "hiver", "cat": "fort", "name": "Amaro Montenegro", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 27},
+                    {"id": "i28", "season": "hiver", "cat": "fort", "name": "Rhum blanc", "min": 1, "max": 5, "supplierId": "saq", "unit": "bouteille", "sort": 28},
+                    {"id": "i29", "season": "hiver", "cat": "fort", "name": "Chartreuse verte", "min": 1, "max": 8, "supplierId": "saq", "unit": "bouteille", "sort": 29},
+                    {"id": "i30", "season": "hiver", "cat": "fort", "name": "Chartreuse jaune", "min": 1, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 30},
+                    {"id": "i31", "season": "hiver", "cat": "fort", "name": "St-Germain", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 31},
+                    {"id": "i32", "season": "hiver", "cat": "fort", "name": "Becherovka", "min": 0, "max": 8, "supplierId": "saq", "unit": "bouteille", "sort": 32},
+                    {"id": "i33", "season": "hiver", "cat": "fort", "name": "Peach Schnapps", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 33},
+                    {"id": "i34", "season": "hiver", "cat": "fort", "name": "Absinthe cheap", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 34},
+                    {"id": "i35", "season": "hiver", "cat": "fort", "name": "Jameson", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 35},
+                    {"id": "i36", "season": "hiver", "cat": "fort", "name": "Scotch (Bowmore ou autre)", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 36},
+                    {"id": "i37", "season": "hiver", "cat": "fort", "name": "Fernet Branca", "min": 1, "max": 8, "supplierId": "saq", "unit": "bouteille", "sort": 37},
+                    {"id": "i38", "season": "hiver", "cat": "fort", "name": "Calvados", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 38},
+                    {"id": "i39", "season": "hiver", "cat": "fort", "name": "Crème de menthe", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 39},
+                    {"id": "i40", "season": "hiver", "cat": "fort", "name": "Choya", "min": 0, "max": 3, "supplierId": "saq", "unit": "bouteille", "sort": 40},
+                    {"id": "i41", "season": "hiver", "cat": "fort", "name": "Pisco El Gobernador", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 41},
+                    {"id": "i42", "season": "hiver", "cat": "fort", "name": "Tequila Espolon", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 42},
+                    {"id": "i43", "season": "hiver", "cat": "fort", "name": "Mezcal Alden", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 43},
+                    {"id": "i44", "season": "hiver", "cat": "fort", "name": "Cachaça Leblon", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 44},
+                    {"id": "i45", "season": "hiver", "cat": "fort", "name": "Luxardo Maraschino", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 45},
+                    {"id": "i46", "season": "hiver", "cat": "fort", "name": "Vodka chili Circa", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 46},
+                    {"id": "i47", "season": "hiver", "cat": "fort", "name": "Yukon Jack", "min": 0, "max": 1, "supplierId": "saq", "unit": "bouteille", "sort": 47},
+                    {"id": "i48", "season": "hiver", "cat": "fort", "name": "Gin Malfy", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 48},
+                    {"id": "i49", "season": "hiver", "cat": "fort", "name": "Gin Km 12 Boreal", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 49},
+                    {"id": "i50", "season": "hiver", "cat": "fort", "name": "Gin Km 12 Concombre", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 50},
+                    {"id": "i51", "season": "hiver", "cat": "fort", "name": "Zubrowka", "min": 0, "max": 2, "supplierId": "saq", "unit": "bouteille", "sort": 51},
+                    {"id": "i52", "season": "hiver", "cat": "fort", "name": "Sour Puss", "min": 2, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 52},
+                    {"id": "i53", "season": "hiver", "cat": "fort", "name": "Skinos", "min": 3, "max": 8, "supplierId": "saq", "unit": "bouteille", "sort": 53},
+                    {"id": "i54", "season": "hiver", "cat": "fort", "name": "Shape Amaretto", "min": 1, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 54},
+                    {"id": "i55", "season": "hiver", "cat": "fort", "name": "Shape Rhum", "min": 1, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 55},
+                    {"id": "i56", "season": "hiver", "cat": "fort", "name": "Fireball", "min": 2, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 56},
+                    {"id": "i57", "season": "hiver", "cat": "fort", "name": "Jager", "min": 2, "max": 6, "supplierId": "saq", "unit": "bouteille", "sort": 57},
+                    {"id": "i58", "season": "hiver", "cat": "fort", "name": "Sirop Orgeat", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 58},
+                    {"id": "i59", "season": "hiver", "cat": "fort", "name": "Bulles Fiol", "min": 5, "max": 24, "supplierId": "saq", "unit": "bouteille", "sort": 59},
+                ],
+                order: { onHand: {}, qty: {}, updatedAt: null, updatedBy: "" }
+            };
         }
 
         // ===== DEPARTMENTS =====
@@ -2875,6 +3008,9 @@
         let _wineReserve = [];
         function getWineReserve() { return _wineReserve || []; }
         function saveWineReserve(arr) { _wineReserve = arr; sbWriteState('wineReserve', arr); }
+        let _inventory = null;
+        function getInventory() { if (!_inventory) _inventory = defaultInventory(); return _inventory; }
+        function saveInventory(data) { _inventory = data; sbWriteState('inventory', data); }
         function getUnavail() { return _unavail || {}; }
         function saveUnavail(obj) { _unavail = obj; sbWriteState('unavail', obj); }
 
@@ -3476,7 +3612,8 @@
             'appareils': 'Appareils autorisés',
             'pourboires': 'Pourboires',
             'paies': 'Paies',
-            'vins': 'Vins / Ardoise'
+            'vins': 'Vins / Ardoise',
+            'inventaire': 'Inventaire'
         };
 
         function openAdminPage(pageId) {
@@ -3514,7 +3651,202 @@
             } else if (pageId === 'vins') {
                 _vinEdit = null;
                 renderVinsAdmin();
+            } else if (pageId === 'inventaire') {
+                renderInventaire();
             }
+        }
+
+        // ===== INVENTAIRE (forts & bières, min/max, commandes) =====
+        let invCat = 'fort';     // 'fort' | 'biere'
+        let invView = 'list';    // 'list' | 'order'
+        let _invSaveTimer = null;
+
+        function invScheduleSave() {
+            if (_invSaveTimer) clearTimeout(_invSaveTimer);
+            _invSaveTimer = setTimeout(function () { sbWriteState('inventory', _inventory); _invSaveTimer = null; }, 600);
+        }
+
+        function invSupplierName(id) {
+            const s = getInventory().suppliers.find(x => x.id === id);
+            return s ? s.name : '(Sans fournisseur)';
+        }
+        function invOrderCount() {
+            const q = getInventory().order.qty || {};
+            return Object.values(q).filter(v => v > 0).length;
+        }
+
+        function renderInventaire() {
+            const inv = getInventory();
+            const el = document.getElementById('inventaire-admin');
+            if (!el) return;
+            let h = '';
+            h += '<div class="inv-seasonbar"><label>Saison</label><select onchange="invSetSeason(this.value)">';
+            inv.seasons.forEach(s => h += '<option value="' + s.id + '"' + (s.id === inv.activeSeason ? ' selected' : '') + '>' + esc(s.name) + '</option>');
+            h += '</select></div>';
+
+            const c = invOrderCount();
+            h += '<div class="inv-viewtabs">';
+            h += '<button class="inv-tab' + (invView === 'list' ? ' active' : '') + '" onclick="invSetView(\'list\')">📋 Liste</button>';
+            h += '<button class="inv-tab' + (invView === 'order' ? ' active' : '') + '" onclick="invSetView(\'order\')">🛒 Commande' + (c ? ' (' + c + ')' : '') + '</button>';
+            h += '</div>';
+
+            h += (invView === 'list') ? invListHtml(inv) : invOrderHtml(inv);
+            el.innerHTML = h;
+        }
+
+        function invListHtml(inv) {
+            let h = '';
+            h += '<div class="inv-cattabs">';
+            h += '<button class="inv-tab' + (invCat === 'fort' ? ' active' : '') + '" onclick="invSetCat(\'fort\')">🥃 Fort</button>';
+            h += '<button class="inv-tab' + (invCat === 'biere' ? ' active' : '') + '" onclick="invSetCat(\'biere\')">🍺 Bière</button>';
+            h += '</div>';
+            h += '<div class="inv-hint">Indique « Reste » → la commande suggérée (max − reste) s\'affiche, modifiable. Sinon, ajuste directement avec − / +.</div>';
+            const items = inv.items.filter(i => i.season === inv.activeSeason && i.cat === invCat).sort((a, b) => a.sort - b.sort);
+            if (!items.length) { h += '<div class="inv-empty">Aucun produit dans cette catégorie.</div>'; return h; }
+            items.forEach(it => h += invItemHtml(inv, it));
+            const c = invOrderCount();
+            if (c) h += '<div class="inv-orderbar"><button onclick="invSetView(\'order\')">🛒 Voir la commande (' + c + (c > 1 ? ' items' : ' item') + ')</button></div>';
+            return h;
+        }
+
+        function invItemHtml(inv, it) {
+            const onHand = inv.order.onHand[it.id];
+            const hasReste = (onHand !== undefined && onHand !== null && onHand !== '');
+            const qty = inv.order.qty[it.id] || 0;
+            const underMin = hasReste && it.min > 0 && Number(onHand) <= it.min;
+            let h = '<div class="inv-item' + (underMin ? ' under-min' : '') + '">';
+            h += '<div class="inv-item-top">';
+            h += '<span class="inv-name">' + esc(it.name) + '</span>';
+            h += '<span class="inv-levels"><span class="mn">min ' + it.min + '</span> · <span class="mx">max ' + it.max + '</span></span>';
+            if (underMin) h += '<span class="inv-flag">⚠️ sous le min</span>';
+            h += '</div>';
+            h += '<div class="inv-controls">';
+            h += '<span class="inv-reste"><label>Reste</label><input type="number" min="0" inputmode="numeric" value="' + (hasReste ? onHand : '') + '" onchange="invSetOnHand(\'' + it.id + '\', this.value)"></span>';
+            h += '<span class="inv-order"><label>À commander</label><span class="inv-stepper">';
+            h += '<button type="button" onclick="invStep(\'' + it.id + '\',-1)">−</button>';
+            h += '<input class="inv-qty' + (qty > 0 ? ' has' : '') + '" type="number" min="0" inputmode="numeric" value="' + qty + '" onchange="invSetQty(\'' + it.id + '\', this.value)">';
+            h += '<button type="button" onclick="invStep(\'' + it.id + '\',1)">+</button>';
+            h += '</span></span>';
+            h += '</div></div>';
+            return h;
+        }
+
+        function invOrderHtml(inv) {
+            const q = inv.order.qty || {};
+            const ordered = inv.items.filter(i => i.season === inv.activeSeason && (q[i.id] || 0) > 0).sort((a, b) => a.sort - b.sort);
+            if (!ordered.length) {
+                return '<div class="inv-empty">Aucun item à commander.<br>Ajoute des quantités dans l\'onglet « Liste ».</div>';
+            }
+            const groups = {};
+            ordered.forEach(it => { const sid = it.supplierId || '__none__'; (groups[sid] = groups[sid] || []).push(it); });
+            const supOrder = inv.suppliers.slice().sort((a, b) => a.sort - b.sort).map(s => s.id);
+            const sids = Object.keys(groups).sort((a, b) => {
+                if (a === '__none__') return 1;
+                if (b === '__none__') return -1;
+                return supOrder.indexOf(a) - supOrder.indexOf(b);
+            });
+            let h = '';
+            sids.forEach(sid => {
+                const name = sid === '__none__' ? '(Sans fournisseur)' : invSupplierName(sid);
+                h += '<div class="inv-sup-group">';
+                h += '<div class="inv-sup-head"><span class="inv-sup-name">' + esc(name) + '</span>';
+                h += '<button class="inv-sup-copy" onclick="invCopySupplier(\'' + sid + '\')">📋 Copier</button></div>';
+                h += '<div class="inv-sup-lines">';
+                groups[sid].forEach(it => h += '<div class="inv-sup-line"><b>' + q[it.id] + '×</b> <span>' + esc(it.name) + '</span></div>');
+                h += '</div></div>';
+            });
+            h += '<div class="inv-order-actions">';
+            h += '<button class="inv-copyall" onclick="invCopyAll()">📋 Copier tout</button>';
+            h += '<button class="inv-reset" onclick="invReset()">🗑️ Réinitialiser</button>';
+            h += '</div>';
+            return h;
+        }
+
+        function invSetView(v) { invView = v; renderInventaire(); }
+        function invSetCat(c) { invCat = c; renderInventaire(); }
+        function invSetSeason(s) { const inv = getInventory(); inv.activeSeason = s; saveInventory(inv); renderInventaire(); }
+
+        function invSetOnHand(id, val) {
+            const inv = getInventory();
+            const it = inv.items.find(x => x.id === id);
+            if (!it) return;
+            if (val === '' || val === null) {
+                delete inv.order.onHand[id];
+            } else {
+                const n = Math.max(0, parseInt(val, 10) || 0);
+                inv.order.onHand[id] = n;
+                const sugg = Math.max(0, it.max - n);   // suggestion auto = max − reste
+                if (sugg > 0) inv.order.qty[id] = sugg; else delete inv.order.qty[id];
+            }
+            inv.order.updatedAt = Date.now();
+            invScheduleSave();
+            renderInventaire();
+        }
+        function invStep(id, delta) {
+            const inv = getInventory();
+            const next = Math.max(0, (inv.order.qty[id] || 0) + delta);
+            if (next === 0) delete inv.order.qty[id]; else inv.order.qty[id] = next;
+            inv.order.updatedAt = Date.now();
+            invScheduleSave();
+            renderInventaire();
+        }
+        function invSetQty(id, val) {
+            const inv = getInventory();
+            const n = Math.max(0, parseInt(val, 10) || 0);
+            if (n === 0) delete inv.order.qty[id]; else inv.order.qty[id] = n;
+            inv.order.updatedAt = Date.now();
+            invScheduleSave();
+            renderInventaire();
+        }
+
+        function invOrderTextForSupplier(inv, sid) {
+            const q = inv.order.qty || {};
+            const items = inv.items
+                .filter(i => i.season === inv.activeSeason && (i.supplierId || '__none__') === sid && (q[i.id] || 0) > 0)
+                .sort((a, b) => a.sort - b.sort);
+            const name = sid === '__none__' ? 'Sans fournisseur' : invSupplierName(sid);
+            const lines = ['Commande — ' + name];
+            items.forEach(it => lines.push(q[it.id] + '× ' + it.name));
+            return lines.join('\n');
+        }
+        function invCopySupplier(sid) {
+            const label = sid === '__none__' ? 'sans fournisseur' : invSupplierName(sid);
+            invCopyText(invOrderTextForSupplier(getInventory(), sid), 'Commande copiée (' + label + ').');
+        }
+        function invCopyAll() {
+            const inv = getInventory();
+            const q = inv.order.qty || {};
+            const ordered = inv.items.filter(i => i.season === inv.activeSeason && (q[i.id] || 0) > 0);
+            const supOrder = inv.suppliers.slice().sort((a, b) => a.sort - b.sort).map(s => s.id);
+            const sids = Array.from(new Set(ordered.map(i => i.supplierId || '__none__'))).sort((a, b) => {
+                if (a === '__none__') return 1;
+                if (b === '__none__') return -1;
+                return supOrder.indexOf(a) - supOrder.indexOf(b);
+            });
+            const txt = sids.map(sid => invOrderTextForSupplier(inv, sid)).join('\n\n');
+            invCopyText(txt, 'Commande complète copiée.');
+        }
+        function invCopyText(txt, okMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).then(() => alert('✓ ' + okMsg)).catch(() => invCopyFallback(txt));
+            } else {
+                invCopyFallback(txt);
+            }
+        }
+        function invCopyFallback(txt) {
+            const ta = document.createElement('textarea');
+            ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.focus(); ta.select();
+            try { document.execCommand('copy'); alert('✓ Commande copiée.'); }
+            catch (e) { prompt('Copie manuelle :', txt); }
+            document.body.removeChild(ta);
+        }
+        function invReset() {
+            if (!confirm('Réinitialiser la commande en cours ? (les « Reste » et quantités seront effacés)')) return;
+            const inv = getInventory();
+            inv.order.qty = {}; inv.order.onHand = {}; inv.order.updatedAt = Date.now();
+            saveInventory(inv);
+            renderInventaire();
         }
 
         // ===== CRÉATION DES HORAIRES =====
