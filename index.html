@@ -1902,9 +1902,6 @@
         .inv-levels .mx { color: var(--green-text); font-weight: 700; }
         .inv-flag { font-size: 11px; font-weight: 700; color: var(--red-text); }
         .inv-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .inv-reste { display: flex; align-items: center; gap: 6px; }
-        .inv-reste label { font-size: 12px; color: var(--text-2); font-weight: 600; }
-        .inv-reste input { width: 56px; padding: 8px; border-radius: 8px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text); font-size: 15px; text-align: center; font-family: var(--mono); }
         .inv-order { display: flex; align-items: center; gap: 8px; margin-left: auto; }
         .inv-order label { font-size: 12px; color: var(--text-2); font-weight: 600; }
         .inv-stepper { display: flex; align-items: center; gap: 0; border: 1px solid var(--sep-strong); border-radius: 9px; overflow: hidden; }
@@ -1930,6 +1927,34 @@
         .inv-copyall { background: var(--accent); color: #fff; border-color: var(--accent) !important; }
         .inv-reset { background: var(--bg-elevated); color: var(--red-text); }
         .inv-empty { font-size: 14px; color: var(--text-3); font-style: italic; text-align: center; padding: 24px 0; }
+
+        .inv-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+        .inv-tool { flex: 1; padding: 11px 8px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text); border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: var(--font); }
+        .inv-tool:hover { color: var(--accent); border-color: var(--accent); }
+        .inv-edit { background: transparent; border: none; cursor: pointer; font-size: 17px; padding: 2px 6px; line-height: 1; opacity: 0.65; }
+        .inv-edit:hover { opacity: 1; }
+
+        .inv-order-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .inv-order-since { font-size: 13px; color: var(--text-2); }
+        .inv-order-since b { color: var(--text); }
+
+        .inv-sup-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--sep); }
+        .inv-sup-rowname { font-size: 14px; font-weight: 600; color: var(--text); }
+        .inv-sup-count { color: var(--text-3); font-weight: 400; font-size: 12px; }
+        .inv-mini { background: var(--bg-elevated); border: 1px solid var(--sep-strong); border-radius: 8px; padding: 6px 9px; font-size: 13px; cursor: pointer; margin-left: 4px; }
+        .inv-mini.danger { color: var(--red-text); border-color: var(--red-soft); }
+
+        .inv-field { margin-bottom: 12px; }
+        .inv-field label { display: block; font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 5px; }
+        .inv-field input, .inv-field select { width: 100%; padding: 11px; border-radius: 9px; border: 1px solid var(--sep-strong); background: var(--bg-elevated); color: var(--text); font-size: 15px; font-family: var(--font); }
+        .inv-field2 { display: flex; gap: 10px; }
+        .inv-field2 .inv-field { flex: 1; }
+
+        .inv-arch { border: 1px solid var(--sep); border-radius: 11px; padding: 11px 12px; margin-bottom: 10px; }
+        .inv-arch-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+        .inv-arch-head b { color: var(--text); }
+        .inv-arch-head .inv-mini { margin-left: auto; }
+        .inv-arch-lines { font-size: 13px; color: var(--text); font-family: var(--mono); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -2600,6 +2625,60 @@
         </div>
     </div>
 
+    <!-- MODAL: INVENTAIRE — ÉDITION PRODUIT -->
+    <div id="invItemModal" class="modal-overlay">
+        <div class="modal-box" style="text-align:left; max-width:420px;">
+            <h2 id="inv-edit-title" style="text-align:center;">Produit</h2>
+            <div class="inv-field"><label>Nom</label><input id="inv-f-name" type="text" placeholder="ex : Vodka moskovskaya 1.14 L"></div>
+            <div class="inv-field"><label>Catégorie</label><select id="inv-f-cat"><option value="fort">🥃 Fort</option><option value="biere">🍺 Bière</option></select></div>
+            <div class="inv-field2">
+                <div class="inv-field"><label>Min (alerte)</label><input id="inv-f-min" type="number" min="0" inputmode="numeric" value="0"></div>
+                <div class="inv-field"><label>Max (cible)</label><input id="inv-f-max" type="number" min="0" inputmode="numeric" value="0"></div>
+            </div>
+            <div class="inv-field"><label>Fournisseur</label><select id="inv-f-supplier"></select></div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="invCloseItemModal()">Annuler</button>
+                <button class="modal-btn confirm" onclick="invSaveItem()">Sauvegarder</button>
+            </div>
+            <button id="inv-delete-btn" onclick="invDeleteItem()" style="display:none; margin-top:12px; width:100%; background:var(--red-soft); color:var(--red-text); border:none; border-radius:13px; padding:13px; font-size:15px; font-weight:600; cursor:pointer;">🗑️ Supprimer ce produit</button>
+        </div>
+    </div>
+
+    <!-- MODAL: INVENTAIRE — FOURNISSEURS -->
+    <div id="invSupModal" class="modal-overlay">
+        <div class="modal-box" style="text-align:left; max-width:420px;">
+            <h2 style="text-align:center;">Fournisseurs</h2>
+            <div id="inv-sup-list" style="margin-bottom:14px;"></div>
+            <div class="inv-field2" style="align-items:flex-end;">
+                <div class="inv-field" style="flex:1;"><label>Nouveau fournisseur</label><input id="inv-newsup-name" type="text" placeholder="ex : Boréale"></div>
+                <button class="modal-btn confirm" style="flex:0 0 auto; width:auto; padding:11px 16px;" onclick="invAddSupplier()">➕</button>
+            </div>
+            <div class="modal-buttons"><button class="modal-btn cancel" onclick="invCloseSuppliers()">Fermer</button></div>
+        </div>
+    </div>
+
+    <!-- MODAL: INVENTAIRE — PROMPT NOUVELLE COMMANDE -->
+    <div id="invOrderPromptModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">🛒</div>
+            <h2>Commande en cours</h2>
+            <p id="inv-prompt-text"></p>
+            <div class="modal-buttons" style="flex-direction:column; gap:8px;">
+                <button class="modal-btn confirm" onclick="invPromptContinue()">➕ Continuer cette commande</button>
+                <button class="modal-btn cancel" onclick="invPromptNew()">🆕 Nouvelle (archiver l'ancienne)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INVENTAIRE — HISTORIQUE -->
+    <div id="invArchModal" class="modal-overlay">
+        <div class="modal-box" style="text-align:left; max-width:440px;">
+            <h2 style="text-align:center;">Historique des commandes</h2>
+            <div id="inv-arch-list" style="max-height:60vh; overflow-y:auto;"></div>
+            <div class="modal-buttons"><button class="modal-btn cancel" onclick="invCloseArchives()">Fermer</button></div>
+        </div>
+    </div>
+
     <!-- MODAL: INFO SHIFT (vue employés, lecture seule) -->
     <div id="shiftInfoModal" class="modal-overlay">
         <div class="modal-box">
@@ -2896,7 +2975,8 @@
                     {"id": "i58", "season": "hiver", "cat": "fort", "name": "Sirop Orgeat", "min": 1, "max": 4, "supplierId": "saq", "unit": "bouteille", "sort": 58},
                     {"id": "i59", "season": "hiver", "cat": "fort", "name": "Bulles Fiol", "min": 5, "max": 24, "supplierId": "saq", "unit": "bouteille", "sort": 59},
                 ],
-                order: { onHand: {}, qty: {}, updatedAt: null, updatedBy: "" }
+                order: { qty: {}, startedAt: null, updatedAt: null },
+                archives: []
             };
         }
 
@@ -3009,8 +3089,8 @@
         function getWineReserve() { return _wineReserve || []; }
         function saveWineReserve(arr) { _wineReserve = arr; sbWriteState('wineReserve', arr); }
         let _inventory = null;
-        function getInventory() { if (!_inventory) _inventory = defaultInventory(); return _inventory; }
-        function saveInventory(data) { _inventory = data; sbWriteState('inventory', data); }
+        function getInventory() { if (!_inventory) _inventory = defaultInventory(); return invNormalize(_inventory); }
+        function saveInventory(data) { _inventory = invNormalize(data); sbWriteState('inventory', _inventory); }
         function getUnavail() { return _unavail || {}; }
         function saveUnavail(obj) { _unavail = obj; sbWriteState('unavail', obj); }
 
@@ -3652,7 +3732,9 @@
                 _vinEdit = null;
                 renderVinsAdmin();
             } else if (pageId === 'inventaire') {
+                invView = 'list';
                 renderInventaire();
+                invMaybePromptNewOrder();
             }
         }
 
@@ -3660,6 +3742,22 @@
         let invCat = 'fort';     // 'fort' | 'biere'
         let invView = 'list';    // 'list' | 'order'
         let _invSaveTimer = null;
+        const INV_ORDER_STALE_DAYS = 3;   // au-delà, on propose une nouvelle commande
+
+        // Migration / valeurs par défaut (l'objet peut venir d'une version antérieure)
+        function invNormalize(inv) {
+            if (!inv) inv = {};
+            if (!Array.isArray(inv.suppliers)) inv.suppliers = [{ id: 'saq', name: 'SAQ', sort: 0 }];
+            if (!Array.isArray(inv.seasons) || !inv.seasons.length) inv.seasons = [{ id: 'hiver', name: 'Hiver (sept–avril)', sort: 0 }, { id: 'ete', name: 'Été (mai–août)', sort: 1 }];
+            if (!inv.activeSeason) inv.activeSeason = inv.seasons[0].id;
+            if (!Array.isArray(inv.items)) inv.items = [];
+            if (!inv.order || typeof inv.order !== 'object') inv.order = {};
+            if (!inv.order.qty || typeof inv.order.qty !== 'object') inv.order.qty = {};
+            if (typeof inv.order.startedAt === 'undefined') inv.order.startedAt = null;
+            if (!Array.isArray(inv.archives)) inv.archives = [];
+            delete inv.order.onHand; // champ retiré
+            return inv;
+        }
 
         function invScheduleSave() {
             if (_invSaveTimer) clearTimeout(_invSaveTimer);
@@ -3674,6 +3772,10 @@
             const q = getInventory().order.qty || {};
             return Object.values(q).filter(v => v > 0).length;
         }
+        function invFmtDate(ts) {
+            if (!ts) return '';
+            return new Date(ts).toLocaleDateString('fr-CA', { weekday: 'short', day: 'numeric', month: 'long' });
+        }
 
         function renderInventaire() {
             const inv = getInventory();
@@ -3686,8 +3788,8 @@
 
             const c = invOrderCount();
             h += '<div class="inv-viewtabs">';
-            h += '<button class="inv-tab' + (invView === 'list' ? ' active' : '') + '" onclick="invSetView(\'list\')">📋 Liste</button>';
-            h += '<button class="inv-tab' + (invView === 'order' ? ' active' : '') + '" onclick="invSetView(\'order\')">🛒 Commande' + (c ? ' (' + c + ')' : '') + '</button>';
+            h += '<button class="inv-tab' + (invView === 'list' ? ' active' : '') + '" onclick="invSetView(\'list\')">📋 Produits</button>';
+            h += '<button class="inv-tab' + (invView === 'order' ? ' active' : '') + '" onclick="invSetView(\'order\')">🛒 Nouvelle commande' + (c ? ' (' + c + ')' : '') + '</button>';
             h += '</div>';
 
             h += (invView === 'list') ? invListHtml(inv) : invOrderHtml(inv);
@@ -3700,9 +3802,11 @@
             h += '<button class="inv-tab' + (invCat === 'fort' ? ' active' : '') + '" onclick="invSetCat(\'fort\')">🥃 Fort</button>';
             h += '<button class="inv-tab' + (invCat === 'biere' ? ' active' : '') + '" onclick="invSetCat(\'biere\')">🍺 Bière</button>';
             h += '</div>';
-            h += '<div class="inv-hint">Indique « Reste » → la commande suggérée (max − reste) s\'affiche, modifiable. Sinon, ajuste directement avec − / +.</div>';
+            h += '<div class="inv-toolbar"><button class="inv-tool" onclick="invOpenItemEdit(null)">➕ Nouveau produit</button>';
+            h += '<button class="inv-tool" onclick="invOpenSuppliers()">⚙️ Fournisseurs</button></div>';
+            h += '<div class="inv-hint">Ajuste la quantité à commander avec − / +. Touche ✏️ pour modifier une fiche (min, max, fournisseur).</div>';
             const items = inv.items.filter(i => i.season === inv.activeSeason && i.cat === invCat).sort((a, b) => a.sort - b.sort);
-            if (!items.length) { h += '<div class="inv-empty">Aucun produit dans cette catégorie.</div>'; return h; }
+            if (!items.length) { h += '<div class="inv-empty">Aucun produit dans cette catégorie.<br>Touche « ➕ Nouveau produit » pour en ajouter.</div>'; return h; }
             items.forEach(it => h += invItemHtml(inv, it));
             const c = invOrderCount();
             if (c) h += '<div class="inv-orderbar"><button onclick="invSetView(\'order\')">🛒 Voir la commande (' + c + (c > 1 ? ' items' : ' item') + ')</button></div>';
@@ -3710,18 +3814,14 @@
         }
 
         function invItemHtml(inv, it) {
-            const onHand = inv.order.onHand[it.id];
-            const hasReste = (onHand !== undefined && onHand !== null && onHand !== '');
             const qty = inv.order.qty[it.id] || 0;
-            const underMin = hasReste && it.min > 0 && Number(onHand) <= it.min;
-            let h = '<div class="inv-item' + (underMin ? ' under-min' : '') + '">';
+            let h = '<div class="inv-item">';
             h += '<div class="inv-item-top">';
             h += '<span class="inv-name">' + esc(it.name) + '</span>';
             h += '<span class="inv-levels"><span class="mn">min ' + it.min + '</span> · <span class="mx">max ' + it.max + '</span></span>';
-            if (underMin) h += '<span class="inv-flag">⚠️ sous le min</span>';
+            h += '<button class="inv-edit" type="button" onclick="invOpenItemEdit(\'' + it.id + '\')" title="Modifier la fiche">✏️</button>';
             h += '</div>';
             h += '<div class="inv-controls">';
-            h += '<span class="inv-reste"><label>Reste</label><input type="number" min="0" inputmode="numeric" value="' + (hasReste ? onHand : '') + '" onchange="invSetOnHand(\'' + it.id + '\', this.value)"></span>';
             h += '<span class="inv-order"><label>À commander</label><span class="inv-stepper">';
             h += '<button type="button" onclick="invStep(\'' + it.id + '\',-1)">−</button>';
             h += '<input class="inv-qty' + (qty > 0 ? ' has' : '') + '" type="number" min="0" inputmode="numeric" value="' + qty + '" onchange="invSetQty(\'' + it.id + '\', this.value)">';
@@ -3734,8 +3834,17 @@
         function invOrderHtml(inv) {
             const q = inv.order.qty || {};
             const ordered = inv.items.filter(i => i.season === inv.activeSeason && (q[i.id] || 0) > 0).sort((a, b) => a.sort - b.sort);
+            let h = '';
+            // En-tête : date de début + accès archives
+            h += '<div class="inv-order-head">';
+            if (inv.order.startedAt) h += '<span class="inv-order-since">Commande débutée le <b>' + invFmtDate(inv.order.startedAt) + '</b></span>';
+            else h += '<span class="inv-order-since">Aucune commande en cours</span>';
+            h += '<button class="inv-tool" onclick="invOpenArchives()">📜 Historique' + (inv.archives.length ? ' (' + inv.archives.length + ')' : '') + '</button>';
+            h += '</div>';
+
             if (!ordered.length) {
-                return '<div class="inv-empty">Aucun item à commander.<br>Ajoute des quantités dans l\'onglet « Liste ».</div>';
+                h += '<div class="inv-empty">Aucun item à commander.<br>Ajoute des quantités dans l\'onglet « Produits ».</div>';
+                return h;
             }
             const groups = {};
             ordered.forEach(it => { const sid = it.supplierId || '__none__'; (groups[sid] = groups[sid] || []).push(it); });
@@ -3745,7 +3854,6 @@
                 if (b === '__none__') return -1;
                 return supOrder.indexOf(a) - supOrder.indexOf(b);
             });
-            let h = '';
             sids.forEach(sid => {
                 const name = sid === '__none__' ? '(Sans fournisseur)' : invSupplierName(sid);
                 h += '<div class="inv-sup-group">';
@@ -3757,8 +3865,9 @@
             });
             h += '<div class="inv-order-actions">';
             h += '<button class="inv-copyall" onclick="invCopyAll()">📋 Copier tout</button>';
-            h += '<button class="inv-reset" onclick="invReset()">🗑️ Réinitialiser</button>';
+            h += '<button class="inv-reset" onclick="invArchiveAndNew()">✓ Archiver &amp; nouvelle</button>';
             h += '</div>';
+            h += '<div class="inv-order-actions"><button class="inv-reset" onclick="invClearOrder()" style="flex:1;">🗑️ Vider sans archiver</button></div>';
             return h;
         }
 
@@ -3766,26 +3875,15 @@
         function invSetCat(c) { invCat = c; renderInventaire(); }
         function invSetSeason(s) { const inv = getInventory(); inv.activeSeason = s; saveInventory(inv); renderInventaire(); }
 
-        function invSetOnHand(id, val) {
-            const inv = getInventory();
-            const it = inv.items.find(x => x.id === id);
-            if (!it) return;
-            if (val === '' || val === null) {
-                delete inv.order.onHand[id];
-            } else {
-                const n = Math.max(0, parseInt(val, 10) || 0);
-                inv.order.onHand[id] = n;
-                const sugg = Math.max(0, it.max - n);   // suggestion auto = max − reste
-                if (sugg > 0) inv.order.qty[id] = sugg; else delete inv.order.qty[id];
-            }
-            inv.order.updatedAt = Date.now();
-            invScheduleSave();
-            renderInventaire();
+        // Marque le début d'une commande si c'est le premier item ajouté
+        function invTouchOrderStart(inv) {
+            if (!inv.order.startedAt && invOrderCount() > 0) inv.order.startedAt = Date.now();
         }
         function invStep(id, delta) {
             const inv = getInventory();
             const next = Math.max(0, (inv.order.qty[id] || 0) + delta);
             if (next === 0) delete inv.order.qty[id]; else inv.order.qty[id] = next;
+            if (!inv.order.startedAt && Object.values(inv.order.qty).some(v => v > 0)) inv.order.startedAt = Date.now();
             inv.order.updatedAt = Date.now();
             invScheduleSave();
             renderInventaire();
@@ -3794,11 +3892,70 @@
             const inv = getInventory();
             const n = Math.max(0, parseInt(val, 10) || 0);
             if (n === 0) delete inv.order.qty[id]; else inv.order.qty[id] = n;
+            if (!inv.order.startedAt && Object.values(inv.order.qty).some(v => v > 0)) inv.order.startedAt = Date.now();
             inv.order.updatedAt = Date.now();
             invScheduleSave();
             renderInventaire();
         }
 
+        // --- Cycle de commande : prompt au retour, archivage ---
+        function invMaybePromptNewOrder() {
+            const inv = getInventory();
+            if (invOrderCount() === 0 || !inv.order.startedAt) return;
+            const ageDays = (Date.now() - inv.order.startedAt) / 86400000;
+            if (ageDays < INV_ORDER_STALE_DAYS) return;
+            document.getElementById('inv-prompt-text').innerHTML =
+                'Une commande est en cours depuis le <b>' + invFmtDate(inv.order.startedAt) + '</b>.<br><br>Veux-tu continuer cette commande, ou en démarrer une nouvelle ? (l\'actuelle sera archivée)';
+            document.getElementById('invOrderPromptModal').classList.add('show');
+        }
+        function invPromptContinue() { document.getElementById('invOrderPromptModal').classList.remove('show'); invSetView('order'); renderInventaire(); }
+        function invPromptNew() {
+            document.getElementById('invOrderPromptModal').classList.remove('show');
+            invArchiveCurrent();
+            invSetView('list');
+        }
+
+        // Construit le snapshot des lignes de la commande courante
+        function invSnapshotLines(inv) {
+            const q = inv.order.qty || {};
+            return inv.items
+                .filter(i => (q[i.id] || 0) > 0)
+                .sort((a, b) => a.sort - b.sort)
+                .map(i => ({ name: i.name, qty: q[i.id], supplierId: i.supplierId || '', supplierName: i.supplierId ? invSupplierName(i.supplierId) : 'Sans fournisseur', cat: i.cat }));
+        }
+        function invArchiveCurrent() {
+            const inv = getInventory();
+            const lines = invSnapshotLines(inv);
+            if (lines.length) {
+                inv.archives.unshift({
+                    id: 'arch_' + Date.now(),
+                    startedAt: inv.order.startedAt,
+                    archivedAt: Date.now(),
+                    season: inv.activeSeason,
+                    lines: lines
+                });
+                if (inv.archives.length > 50) inv.archives = inv.archives.slice(0, 50);
+            }
+            inv.order.qty = {};
+            inv.order.startedAt = null;
+            inv.order.updatedAt = Date.now();
+            saveInventory(inv);
+        }
+        function invArchiveAndNew() {
+            if (!confirm('Archiver cette commande et en démarrer une nouvelle (vide) ?')) return;
+            invArchiveCurrent();
+            renderInventaire();
+            alert('✓ Commande archivée. Nouvelle commande prête.');
+        }
+        function invClearOrder() {
+            if (!confirm('Vider la commande en cours SANS l\'archiver ? (les quantités seront perdues)')) return;
+            const inv = getInventory();
+            inv.order.qty = {}; inv.order.startedAt = null; inv.order.updatedAt = Date.now();
+            saveInventory(inv);
+            renderInventaire();
+        }
+
+        // --- Copie texte ---
         function invOrderTextForSupplier(inv, sid) {
             const q = inv.order.qty || {};
             const items = inv.items
@@ -3841,12 +3998,144 @@
             catch (e) { prompt('Copie manuelle :', txt); }
             document.body.removeChild(ta);
         }
-        function invReset() {
-            if (!confirm('Réinitialiser la commande en cours ? (les « Reste » et quantités seront effacés)')) return;
+
+        // --- Édition des fiches produits ---
+        let _invEditId = null;
+        function invOpenItemEdit(id) {
             const inv = getInventory();
-            inv.order.qty = {}; inv.order.onHand = {}; inv.order.updatedAt = Date.now();
+            _invEditId = id;
+            const it = id ? inv.items.find(x => x.id === id) : null;
+            document.getElementById('inv-edit-title').textContent = it ? 'Modifier le produit' : 'Nouveau produit';
+            document.getElementById('inv-f-name').value = it ? it.name : '';
+            document.getElementById('inv-f-cat').value = it ? it.cat : invCat;
+            document.getElementById('inv-f-min').value = it ? it.min : 0;
+            document.getElementById('inv-f-max').value = it ? it.max : 0;
+            invFillSupplierSelect(it ? it.supplierId : '');
+            document.getElementById('inv-delete-btn').style.display = it ? 'block' : 'none';
+            document.getElementById('invItemModal').classList.add('show');
+        }
+        function invFillSupplierSelect(selId) {
+            const inv = getInventory();
+            const sel = document.getElementById('inv-f-supplier');
+            let opts = '<option value="">— Sans fournisseur —</option>';
+            inv.suppliers.slice().sort((a, b) => a.sort - b.sort).forEach(s => {
+                opts += '<option value="' + s.id + '"' + (s.id === selId ? ' selected' : '') + '>' + esc(s.name) + '</option>';
+            });
+            sel.innerHTML = opts;
+        }
+        function invCloseItemModal() { document.getElementById('invItemModal').classList.remove('show'); _invEditId = null; }
+        function invSaveItem() {
+            const inv = getInventory();
+            const name = document.getElementById('inv-f-name').value.trim();
+            if (!name) { alert('⚠️ Donne un nom au produit.'); return; }
+            const cat = document.getElementById('inv-f-cat').value;
+            const min = Math.max(0, parseInt(document.getElementById('inv-f-min').value, 10) || 0);
+            const max = Math.max(0, parseInt(document.getElementById('inv-f-max').value, 10) || 0);
+            const supplierId = document.getElementById('inv-f-supplier').value;
+            if (_invEditId) {
+                const it = inv.items.find(x => x.id === _invEditId);
+                if (it) { it.name = name; it.cat = cat; it.min = min; it.max = max; it.supplierId = supplierId; }
+            } else {
+                const maxSort = inv.items.reduce((m, x) => Math.max(m, x.sort || 0), 0);
+                inv.items.push({
+                    id: 'i_' + Date.now(),
+                    season: inv.activeSeason,
+                    cat: cat, name: name, min: min, max: max,
+                    supplierId: supplierId,
+                    unit: cat === 'biere' ? 'baril' : 'bouteille',
+                    sort: maxSort + 1
+                });
+            }
             saveInventory(inv);
+            invCloseItemModal();
+            invCat = cat;
             renderInventaire();
+        }
+        function invDeleteItem() {
+            if (!_invEditId) return;
+            const inv = getInventory();
+            const it = inv.items.find(x => x.id === _invEditId);
+            if (!confirm('Supprimer définitivement « ' + ((it && it.name) || 'ce produit') + ' » ?')) return;
+            inv.items = inv.items.filter(x => x.id !== _invEditId);
+            delete inv.order.qty[_invEditId];
+            saveInventory(inv);
+            invCloseItemModal();
+            renderInventaire();
+        }
+
+        // --- Gestion des fournisseurs ---
+        function invOpenSuppliers() { invRenderSuppliers(); document.getElementById('invSupModal').classList.add('show'); }
+        function invCloseSuppliers() { document.getElementById('invSupModal').classList.remove('show'); }
+        function invRenderSuppliers() {
+            const inv = getInventory();
+            let h = '';
+            inv.suppliers.slice().sort((a, b) => a.sort - b.sort).forEach(s => {
+                const count = inv.items.filter(i => i.supplierId === s.id).length;
+                h += '<div class="inv-sup-row"><span class="inv-sup-rowname">' + esc(s.name) + ' <span class="inv-sup-count">(' + count + ')</span></span>';
+                h += '<span><button class="inv-mini" onclick="invRenameSupplier(\'' + s.id + '\')">✏️</button>';
+                h += '<button class="inv-mini danger" onclick="invDeleteSupplier(\'' + s.id + '\')">🗑️</button></span></div>';
+            });
+            if (!inv.suppliers.length) h += '<div class="inv-empty">Aucun fournisseur.</div>';
+            document.getElementById('inv-sup-list').innerHTML = h;
+        }
+        function invAddSupplier() {
+            const name = (document.getElementById('inv-newsup-name').value || '').trim();
+            if (!name) { alert('⚠️ Entre un nom de fournisseur.'); return; }
+            const inv = getInventory();
+            const maxSort = inv.suppliers.reduce((m, x) => Math.max(m, x.sort || 0), 0);
+            inv.suppliers.push({ id: 'sup_' + Date.now(), name: name, sort: maxSort + 1 });
+            saveInventory(inv);
+            document.getElementById('inv-newsup-name').value = '';
+            invRenderSuppliers();
+        }
+        function invRenameSupplier(id) {
+            const inv = getInventory();
+            const s = inv.suppliers.find(x => x.id === id);
+            if (!s) return;
+            const name = prompt('Nouveau nom du fournisseur :', s.name);
+            if (name === null) return;
+            if (!name.trim()) { alert('⚠️ Nom vide.'); return; }
+            s.name = name.trim();
+            saveInventory(inv);
+            invRenderSuppliers();
+        }
+        function invDeleteSupplier(id) {
+            const inv = getInventory();
+            const s = inv.suppliers.find(x => x.id === id);
+            const count = inv.items.filter(i => i.supplierId === id).length;
+            if (!confirm('Supprimer le fournisseur « ' + ((s && s.name) || '') + ' » ?' + (count ? '\n\n' + count + ' produit(s) deviendront « Sans fournisseur ».' : ''))) return;
+            inv.suppliers = inv.suppliers.filter(x => x.id !== id);
+            inv.items.forEach(i => { if (i.supplierId === id) i.supplierId = ''; });
+            saveInventory(inv);
+            invRenderSuppliers();
+        }
+
+        // --- Historique des commandes archivées ---
+        function invOpenArchives() { invRenderArchives(); document.getElementById('invArchModal').classList.add('show'); }
+        function invCloseArchives() { document.getElementById('invArchModal').classList.remove('show'); }
+        function invRenderArchives() {
+            const inv = getInventory();
+            let h = '';
+            if (!inv.archives.length) { h = '<div class="inv-empty">Aucune commande archivée.</div>'; }
+            inv.archives.forEach(a => {
+                const total = a.lines.reduce((m, l) => m + l.qty, 0);
+                h += '<div class="inv-arch">';
+                h += '<div class="inv-arch-head"><b>' + invFmtDate(a.archivedAt) + '</b> · ' + a.lines.length + ' produits · ' + total + ' unités';
+                h += '<button class="inv-mini" onclick="invCopyArchive(\'' + a.id + '\')">📋</button></div>';
+                h += '<div class="inv-arch-lines">' + a.lines.map(l => l.qty + '× ' + esc(l.name)).join('<br>') + '</div>';
+                h += '</div>';
+            });
+            document.getElementById('inv-arch-list').innerHTML = h;
+        }
+        function invCopyArchive(aid) {
+            const inv = getInventory();
+            const a = inv.archives.find(x => x.id === aid);
+            if (!a) return;
+            // grouper par fournisseur
+            const groups = {};
+            a.lines.forEach(l => { const k = l.supplierName || 'Sans fournisseur'; (groups[k] = groups[k] || []).push(l); });
+            const txt = Object.keys(groups).map(k => 'Commande — ' + k + '\n' + groups[k].map(l => l.qty + '× ' + l.name).join('\n')).join('\n\n');
+            invCopyText(txt, 'Commande archivée copiée.');
         }
 
         // ===== CRÉATION DES HORAIRES =====
