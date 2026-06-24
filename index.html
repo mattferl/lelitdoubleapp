@@ -1897,6 +1897,7 @@
         .inv-item.under-min { border-color: var(--red); background: var(--red-soft); }
         .inv-item-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
         .inv-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; min-width: 140px; }
+        .inv-fmt { display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 1px 6px; vertical-align: middle; }
         .inv-levels { font-size: 12px; color: var(--text-2); font-family: var(--mono); white-space: nowrap; }
         .inv-levels .mn { color: var(--red-text); font-weight: 700; }
         .inv-levels .mx { color: var(--green-text); font-weight: 700; }
@@ -2629,8 +2630,17 @@
     <div id="invItemModal" class="modal-overlay">
         <div class="modal-box" style="text-align:left; max-width:420px;">
             <h2 id="inv-edit-title" style="text-align:center;">Produit</h2>
-            <div class="inv-field"><label>Nom</label><input id="inv-f-name" type="text" placeholder="ex : Vodka moskovskaya 1.14 L"></div>
-            <div class="inv-field"><label>Catégorie</label><select id="inv-f-cat"><option value="fort">🥃 Fort</option><option value="biere">🍺 Bière</option></select></div>
+            <div class="inv-field"><label>Nom</label><input id="inv-f-name" type="text" placeholder="ex : Vodka moskovskaya"></div>
+            <div class="inv-field"><label>Catégorie</label><select id="inv-f-cat"><option value="fort">🥃 Fort</option><option value="biere">🍺 Bière</option><option value="verre">🥂 Verrerie</option></select></div>
+            <div class="inv-field"><label>Format</label>
+                <input id="inv-f-format" type="text" list="inv-format-list" placeholder="ex : baril 50L, 750ml, 20oz">
+                <datalist id="inv-format-list">
+                    <option value="baril 50L"></option><option value="baril 30L"></option>
+                    <option value="750ml"></option><option value="1L"></option><option value="1.14L"></option>
+                    <option value="375ml"></option><option value="500ml"></option>
+                    <option value="10oz"></option><option value="20oz"></option><option value="3/4oz"></option>
+                </datalist>
+            </div>
             <div class="inv-field2">
                 <div class="inv-field"><label>Min (alerte)</label><input id="inv-f-min" type="number" min="0" inputmode="numeric" value="0"></div>
                 <div class="inv-field"><label>Max (cible)</label><input id="inv-f-max" type="number" min="0" inputmode="numeric" value="0"></div>
@@ -2909,8 +2919,20 @@
         }
 
         // ===== INVENTAIRE — données de départ (depuis la cheat sheet hiver) =====
+        function defaultGlassware() {
+            const names = [
+                'Nick and Nora', 'Verre bière 10oz', 'Verres bière 20oz', 'Verres à vin',
+                'High ball', 'Verres à whiskey', 'Verres en plastique 20oz',
+                'Shooters 3/4oz en vitre', 'Verres à eau'
+            ];
+            return names.map((n, i) => ({
+                id: 'g' + String(i + 1).padStart(2, '0'),
+                season: 'all', cat: 'verre', name: n, format: '',
+                min: 0, max: 0, supplierId: '', unit: 'unité', sort: 100 + i
+            }));
+        }
         function defaultInventory() {
-            return {
+            const inv = {
                 suppliers: [{ id: "saq", name: "SAQ", sort: 0 }],
                 seasons: [{ id: "hiver", name: "Hiver (sept–avril)", sort: 0 }, { id: "ete", name: "Été (mai–août)", sort: 1 }],
                 activeSeason: "hiver",
@@ -2976,8 +2998,11 @@
                     {"id": "i59", "season": "hiver", "cat": "fort", "name": "Bulles Fiol", "min": 5, "max": 24, "supplierId": "saq", "unit": "bouteille", "sort": 59},
                 ],
                 order: { qty: {}, startedAt: null, updatedAt: null },
-                archives: []
+                archives: [],
+                glasswareSeeded: true
             };
+            inv.items = inv.items.concat(defaultGlassware());
+            return inv;
         }
 
         // ===== DEPARTMENTS =====
@@ -3733,6 +3758,7 @@
                 renderVinsAdmin();
             } else if (pageId === 'inventaire') {
                 invView = 'list';
+                invRunMigrations();
                 renderInventaire();
                 invMaybePromptNewOrder();
             }
@@ -3757,6 +3783,21 @@
             if (!Array.isArray(inv.archives)) inv.archives = [];
             delete inv.order.onHand; // champ retiré
             return inv;
+        }
+
+        // Un item est visible si sa saison correspond, ou s'il est "all" (ex : verrerie)
+        function invItemInSeason(it, inv) { return it.season === 'all' || it.season === inv.activeSeason; }
+
+        // Migrations ponctuelles sur une base déjà semée (ajoute la verrerie si absente)
+        function invRunMigrations() {
+            const inv = getInventory();
+            let changed = false;
+            if (!inv.glasswareSeeded) {
+                if (!inv.items.some(i => i.cat === 'verre')) { inv.items = inv.items.concat(defaultGlassware()); }
+                inv.glasswareSeeded = true;
+                changed = true;
+            }
+            if (changed) saveInventory(inv);
         }
 
         function invScheduleSave() {
@@ -3801,11 +3842,12 @@
             h += '<div class="inv-cattabs">';
             h += '<button class="inv-tab' + (invCat === 'fort' ? ' active' : '') + '" onclick="invSetCat(\'fort\')">🥃 Fort</button>';
             h += '<button class="inv-tab' + (invCat === 'biere' ? ' active' : '') + '" onclick="invSetCat(\'biere\')">🍺 Bière</button>';
+            h += '<button class="inv-tab' + (invCat === 'verre' ? ' active' : '') + '" onclick="invSetCat(\'verre\')">🥂 Verrerie</button>';
             h += '</div>';
             h += '<div class="inv-toolbar"><button class="inv-tool" onclick="invOpenItemEdit(null)">➕ Nouveau produit</button>';
             h += '<button class="inv-tool" onclick="invOpenSuppliers()">⚙️ Fournisseurs</button></div>';
-            h += '<div class="inv-hint">Ajuste la quantité à commander avec − / +. Touche ✏️ pour modifier une fiche (min, max, fournisseur).</div>';
-            const items = inv.items.filter(i => i.season === inv.activeSeason && i.cat === invCat).sort((a, b) => a.sort - b.sort);
+            h += '<div class="inv-hint">Ajuste la quantité à commander avec − / +. Touche ✏️ pour modifier une fiche (format, min, max, fournisseur).</div>';
+            const items = inv.items.filter(i => invItemInSeason(i, inv) && i.cat === invCat).sort((a, b) => a.sort - b.sort);
             if (!items.length) { h += '<div class="inv-empty">Aucun produit dans cette catégorie.<br>Touche « ➕ Nouveau produit » pour en ajouter.</div>'; return h; }
             items.forEach(it => h += invItemHtml(inv, it));
             const c = invOrderCount();
@@ -3817,7 +3859,7 @@
             const qty = inv.order.qty[it.id] || 0;
             let h = '<div class="inv-item">';
             h += '<div class="inv-item-top">';
-            h += '<span class="inv-name">' + esc(it.name) + '</span>';
+            h += '<span class="inv-name">' + esc(it.name) + (it.format ? ' <span class="inv-fmt">' + esc(it.format) + '</span>' : '') + '</span>';
             h += '<span class="inv-levels"><span class="mn">min ' + it.min + '</span> · <span class="mx">max ' + it.max + '</span></span>';
             h += '<button class="inv-edit" type="button" onclick="invOpenItemEdit(\'' + it.id + '\')" title="Modifier la fiche">✏️</button>';
             h += '</div>';
@@ -3833,7 +3875,7 @@
 
         function invOrderHtml(inv) {
             const q = inv.order.qty || {};
-            const ordered = inv.items.filter(i => i.season === inv.activeSeason && (q[i.id] || 0) > 0).sort((a, b) => a.sort - b.sort);
+            const ordered = inv.items.filter(i => invItemInSeason(i, inv) && (q[i.id] || 0) > 0).sort((a, b) => a.sort - b.sort);
             let h = '';
             // En-tête : date de début + accès archives
             h += '<div class="inv-order-head">';
@@ -3860,7 +3902,7 @@
                 h += '<div class="inv-sup-head"><span class="inv-sup-name">' + esc(name) + '</span>';
                 h += '<button class="inv-sup-copy" onclick="invCopySupplier(\'' + sid + '\')">📋 Copier</button></div>';
                 h += '<div class="inv-sup-lines">';
-                groups[sid].forEach(it => h += '<div class="inv-sup-line"><b>' + q[it.id] + '×</b> <span>' + esc(it.name) + '</span></div>');
+                groups[sid].forEach(it => h += '<div class="inv-sup-line"><b>' + q[it.id] + '×</b> <span>' + esc(it.name) + (it.format ? ' (' + esc(it.format) + ')' : '') + '</span></div>');
                 h += '</div></div>';
             });
             h += '<div class="inv-order-actions">';
@@ -3921,7 +3963,7 @@
             return inv.items
                 .filter(i => (q[i.id] || 0) > 0)
                 .sort((a, b) => a.sort - b.sort)
-                .map(i => ({ name: i.name, qty: q[i.id], supplierId: i.supplierId || '', supplierName: i.supplierId ? invSupplierName(i.supplierId) : 'Sans fournisseur', cat: i.cat }));
+                .map(i => ({ name: i.name, format: i.format || '', qty: q[i.id], supplierId: i.supplierId || '', supplierName: i.supplierId ? invSupplierName(i.supplierId) : 'Sans fournisseur', cat: i.cat }));
         }
         function invArchiveCurrent() {
             const inv = getInventory();
@@ -3959,11 +4001,11 @@
         function invOrderTextForSupplier(inv, sid) {
             const q = inv.order.qty || {};
             const items = inv.items
-                .filter(i => i.season === inv.activeSeason && (i.supplierId || '__none__') === sid && (q[i.id] || 0) > 0)
+                .filter(i => invItemInSeason(i, inv) && (i.supplierId || '__none__') === sid && (q[i.id] || 0) > 0)
                 .sort((a, b) => a.sort - b.sort);
             const name = sid === '__none__' ? 'Sans fournisseur' : invSupplierName(sid);
             const lines = ['Commande — ' + name];
-            items.forEach(it => lines.push(q[it.id] + '× ' + it.name));
+            items.forEach(it => lines.push(q[it.id] + '× ' + it.name + (it.format ? ' (' + it.format + ')' : '')));
             return lines.join('\n');
         }
         function invCopySupplier(sid) {
@@ -3973,7 +4015,7 @@
         function invCopyAll() {
             const inv = getInventory();
             const q = inv.order.qty || {};
-            const ordered = inv.items.filter(i => i.season === inv.activeSeason && (q[i.id] || 0) > 0);
+            const ordered = inv.items.filter(i => invItemInSeason(i, inv) && (q[i.id] || 0) > 0);
             const supOrder = inv.suppliers.slice().sort((a, b) => a.sort - b.sort).map(s => s.id);
             const sids = Array.from(new Set(ordered.map(i => i.supplierId || '__none__'))).sort((a, b) => {
                 if (a === '__none__') return 1;
@@ -4008,6 +4050,7 @@
             document.getElementById('inv-edit-title').textContent = it ? 'Modifier le produit' : 'Nouveau produit';
             document.getElementById('inv-f-name').value = it ? it.name : '';
             document.getElementById('inv-f-cat').value = it ? it.cat : invCat;
+            document.getElementById('inv-f-format').value = it ? (it.format || '') : '';
             document.getElementById('inv-f-min').value = it ? it.min : 0;
             document.getElementById('inv-f-max').value = it ? it.max : 0;
             invFillSupplierSelect(it ? it.supplierId : '');
@@ -4029,20 +4072,24 @@
             const name = document.getElementById('inv-f-name').value.trim();
             if (!name) { alert('⚠️ Donne un nom au produit.'); return; }
             const cat = document.getElementById('inv-f-cat').value;
+            const format = document.getElementById('inv-f-format').value.trim();
             const min = Math.max(0, parseInt(document.getElementById('inv-f-min').value, 10) || 0);
             const max = Math.max(0, parseInt(document.getElementById('inv-f-max').value, 10) || 0);
             const supplierId = document.getElementById('inv-f-supplier').value;
+            const unitFor = c => c === 'biere' ? 'baril' : (c === 'verre' ? 'unité' : 'bouteille');
+            // La verrerie n'est pas saisonnière (saison 'all')
+            const seasonFor = (c, cur) => c === 'verre' ? 'all' : (cur && cur !== 'all' ? cur : inv.activeSeason);
             if (_invEditId) {
                 const it = inv.items.find(x => x.id === _invEditId);
-                if (it) { it.name = name; it.cat = cat; it.min = min; it.max = max; it.supplierId = supplierId; }
+                if (it) { it.name = name; it.cat = cat; it.format = format; it.min = min; it.max = max; it.supplierId = supplierId; it.unit = unitFor(cat); it.season = seasonFor(cat, it.season); }
             } else {
                 const maxSort = inv.items.reduce((m, x) => Math.max(m, x.sort || 0), 0);
                 inv.items.push({
                     id: 'i_' + Date.now(),
-                    season: inv.activeSeason,
-                    cat: cat, name: name, min: min, max: max,
+                    season: seasonFor(cat, null),
+                    cat: cat, name: name, format: format, min: min, max: max,
                     supplierId: supplierId,
-                    unit: cat === 'biere' ? 'baril' : 'bouteille',
+                    unit: unitFor(cat),
                     sort: maxSort + 1
                 });
             }
@@ -4122,7 +4169,7 @@
                 h += '<div class="inv-arch">';
                 h += '<div class="inv-arch-head"><b>' + invFmtDate(a.archivedAt) + '</b> · ' + a.lines.length + ' produits · ' + total + ' unités';
                 h += '<button class="inv-mini" onclick="invCopyArchive(\'' + a.id + '\')">📋</button></div>';
-                h += '<div class="inv-arch-lines">' + a.lines.map(l => l.qty + '× ' + esc(l.name)).join('<br>') + '</div>';
+                h += '<div class="inv-arch-lines">' + a.lines.map(l => l.qty + '× ' + esc(l.name) + (l.format ? ' (' + esc(l.format) + ')' : '')).join('<br>') + '</div>';
                 h += '</div>';
             });
             document.getElementById('inv-arch-list').innerHTML = h;
@@ -4134,7 +4181,7 @@
             // grouper par fournisseur
             const groups = {};
             a.lines.forEach(l => { const k = l.supplierName || 'Sans fournisseur'; (groups[k] = groups[k] || []).push(l); });
-            const txt = Object.keys(groups).map(k => 'Commande — ' + k + '\n' + groups[k].map(l => l.qty + '× ' + l.name).join('\n')).join('\n\n');
+            const txt = Object.keys(groups).map(k => 'Commande — ' + k + '\n' + groups[k].map(l => l.qty + '× ' + l.name + (l.format ? ' (' + l.format + ')' : '')).join('\n')).join('\n\n');
             invCopyText(txt, 'Commande archivée copiée.');
         }
 
